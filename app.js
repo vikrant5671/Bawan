@@ -45,8 +45,20 @@ io.on("connection", (socket) => {
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("message", message);
       sendLogToClients(`Message sent to ${receiverSocketId}: ${message}`);
+      socket.emit("message_status", {
+        status: "DELIVERED",
+        message: message,
+        receiverId: receiverId,
+        timestamp: Date.now()
+      });
       console.log(`Message sent to ${receiverSocketId}: ${message}`);
     } else {
+       socket.emit("message_status", {
+        status: "FAILED",
+        message: message,
+        receiverId: receiverId,
+        timestamp: Date.now()
+      });
       console.log(`USER ${receiverId} IS NOT CONNECTED.`);
     }
   });
